@@ -10,10 +10,14 @@ using UnityEngine.Tilemaps;
 namespace MapGenerator
 {
     public class PerlinMapGenerator : SerializedMonoBehaviour
-    {
-        [Title("Tiles")] [SerializeField] private TileType[] _tiles;
+    {  
+        [Title("Generate Using")]
+        [SerializeField,ShowIf("@!useTileMap")] private bool useGameObjects;
+        [SerializeField,ShowIf("@!useGameObjects")] private bool useTileMap;
+        
+        [Title("Tiles")] [SerializeField,ShowIf("@useGameObjects")] private TileType[] _tiles;
 
-        [SerializeField] private TileTypeSprite[] _spriteTiles;
+        [Title("TilesSprites"),SerializeField,ShowIf("@useTileMap")] private TileTypeSprite[] _spriteTiles;
 
 
         private Dictionary<string, GameObject> _tileGroups;
@@ -21,10 +25,7 @@ namespace MapGenerator
 
         [Title("TileMap")] [SerializeField] private Tilemap tilemap;
 
-        
-        [Title("Generate Using")]
-        [SerializeField] private bool useGameObjects;
-        [SerializeField] private bool useTileMap;
+      
         
         [Title("Generator Settings")] [SerializeField]
         private int mapWidth;
