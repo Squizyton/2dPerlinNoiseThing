@@ -53,9 +53,11 @@ namespace Jobs
                 
                 noiseHeight += perlinedValue * amplitude;
 
-                //Decreases each octave
+                // Persistance is between 0 and 1 (typically 0.5), so amplitude decreases each ocatave.
+                // Octaves add roughness, this mean each subsequent pass will add roughness on a smaller scale.
                 amplitude *= Persistance;
-                //Increases each octave
+                // Lacunarity is above 1 (typically 2), so frequency increases each octave.
+                // Octaves add roughness, this means that each subsequent pass will add more roughness.
                 frequency *= Lacunarity;
             }
 
