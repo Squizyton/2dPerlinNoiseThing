@@ -8,8 +8,7 @@ namespace Jobs
     public struct FalloffGenerator : IJob
     {
         public NativeArray<float> FalloffMap;
-
-
+        public bool useAnimationCurve;
         public uint MapSize;
 
 
@@ -24,8 +23,9 @@ namespace Jobs
                 var y = j / (float) size * 2 - 1;
 
                 var value = math.max(math.abs(x), math.abs(y));
-
-                map[i, j] = Evaluate(value);
+                if (!useAnimationCurve)
+                    map[i, j] = Evaluate(value);
+                else map[i, j] = EvaluateUsingCurve(x,y);
             }
 
             return map;
@@ -37,6 +37,12 @@ namespace Jobs
             const float b = 2.2f;
 
             return math.pow(value, a) / (math.pow(value, a) + math.pow(b - b * value, a));
+        }
+
+        private float EvaluateUsingCurve(float x, float y)
+        {
+           // return  -1 * ((curve.Evaluate(x) * curve.Evaluate(y) * 2) - 1);
+           return 0;
         }
 
         public void Execute()

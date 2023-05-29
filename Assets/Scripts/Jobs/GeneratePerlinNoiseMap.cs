@@ -16,14 +16,14 @@ namespace Jobs
         public int Octaves;
         public float Persistance;
         public float Lacunarity;
-        
+        public float Frequency;
         [ReadOnly]
         public NativeArray<float2> OctaveOffsets;
         private float GenerateNoise(int index)
         {
             float amplitude = 1;
             //The Higher the frequency, the further apart the sample points will be which means height valeus will change more rapidally
-            float frequency = 1;
+            var frequency = Frequency;
             float noiseHeight = 0;
             
             if (NoiseScale <= 0)
@@ -46,7 +46,7 @@ namespace Jobs
                 
                 
                 //Todo: Change Mathf.PerlinNosie to Job equivalent when..it works
-                var perlinedValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1f;
+                var perlinedValue = noise.cnoise(new float2(sampleX, sampleY));
                 
                // Debug.Log($"Value: {perlinedValue}");
                 

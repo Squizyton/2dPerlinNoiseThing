@@ -30,6 +30,7 @@ namespace MapGenerator
         private int mapWidth;
         [SerializeField] private int mapHeight;
 
+        [SerializeField, Range(0, 1)] private float frequency;
         //TODO: Re-explain what this does. I dont remember
         public float noiseScale;
         public int octaves;
@@ -55,7 +56,6 @@ namespace MapGenerator
         private bool generatingMap;
         private NativeArray<float2> octaveOffsets;
         private List<GameObject> spawnedTiles;
-
 
         [Title("Misc Debug things")] [SerializeField, Sirenix.OdinInspector.ReadOnly]
         private float timeOfGeneration;
@@ -140,7 +140,7 @@ namespace MapGenerator
                 Lacunarity = lacunarity,
                 OctaveOffsets = octaveOffsets,
                 //amplitude = 1,
-                //frequency = 1f,
+                Frequency = frequency,
                 //noiseHeight = 0f
             };
 
