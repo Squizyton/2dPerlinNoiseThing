@@ -612,14 +612,14 @@ MonoBehaviour:
   tilemap: {fileID: 586997924}
   useGameObjects: 0
   useTileMap: 1
-  mapWidth: 1000
-  mapHeight: 1000
+  mapWidth: 500
+  mapHeight: 500
   noiseScale: 50
   octaves: 8
   persistance: 0.5
   lacunarity: 2
   useFallOffMap: 1
-  seed: 1712361973
+  seed: 167180022
   offset: {x: 0, y: 0}
   timeOfGeneration: 0
   showGenerationTimeDebug: 1
