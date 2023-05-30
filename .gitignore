@@ -61,3 +61,11 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+
+Assets/Prefabs/Grid.prefab
+
+Assets/Prefabs/Grid.prefab.meta
+
+Assets/Prefabs/DevGrid.prefab
+
+Assets/Prefabs/DevGrid.prefab.meta

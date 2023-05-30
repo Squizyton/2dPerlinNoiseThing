@@ -10,14 +10,18 @@ using UnityEngine.Tilemaps;
 namespace MapGenerator
 {
     public class PerlinMapGenerator : SerializedMonoBehaviour
-    {  
-        [Title("Generate Using")]
-        [SerializeField,ShowIf("@!useTileMap")] private bool useGameObjects;
-        [SerializeField,ShowIf("@!useGameObjects")] private bool useTileMap;
-        
-        [Title("Tiles")] [SerializeField,ShowIf("@useGameObjects")] private TileType[] _tiles;
+    {
+        [Title("Generate Using")] [SerializeField, ShowIf("@!useTileMap")]
+        private bool useGameObjects;
 
-        [Title("TilesSprites"),SerializeField,ShowIf("@useTileMap")] private TileTypeSprite[] _spriteTiles;
+        [SerializeField, ShowIf("@!useGameObjects")]
+        private bool useTileMap;
+
+        [Title("Tiles")] [SerializeField, ShowIf("@useGameObjects")]
+        private TileType[] _tiles;
+
+        [Title("TilesSprites"), SerializeField, ShowIf("@useTileMap")]
+        private TileTypeSprite[] _spriteTiles;
 
 
         private Dictionary<string, GameObject> _tileGroups;
@@ -25,28 +29,28 @@ namespace MapGenerator
 
         [Title("TileMap")] [SerializeField] private Tilemap tilemap;
 
-      
-        
+
         [Title("Generator Settings")] [SerializeField]
         private int mapWidth;
+
         [SerializeField] private int mapHeight;
 
         [SerializeField, Range(0, 1)] private float frequency;
+
         //TODO: Re-explain what this does. I dont remember
         public float noiseScale;
         public int octaves;
         [Range(0, 1)] public float persistance;
         public float lacunarity;
 
-        [Title("Falloff map")] 
-        public bool useFallOffMap;
-
+        [Title("Falloff map")] public bool useFallOffMap;
         private NativeArray<float> _falloffMap;
-        
-        
 
-        [Space(10),Title("Misc")]
-        public uint seed;
+
+        [Space(10), Title("Misc")] [SerializeField]
+        private bool randomizeSeed;
+
+        [EnableIf("@!randomizeSeed")] public uint seed;
         public Vector2 offset;
 
         [Header("Job Related THings")] private NativeArray<float> _tilesPerlined;
@@ -70,9 +74,9 @@ namespace MapGenerator
         {
             spawnedTiles = new List<GameObject>();
 
-            _falloffMap = new NativeArray<float>(mapWidth*mapHeight,Allocator.Persistent);
-            
-            
+            _falloffMap = new NativeArray<float>(mapWidth * mapHeight, Allocator.Persistent);
+
+
             CreateTileGroups();
         }
 
@@ -106,8 +110,8 @@ namespace MapGenerator
         void GenerateMap()
         {
             generatingMap = true;
-
-            seed = (uint) UnityEngine.Random.Range(0, int.MaxValue);
+            if (randomizeSeed)
+                seed = (uint) UnityEngine.Random.Range(0, int.MaxValue);
 
             _tilesPerlined = new NativeArray<float>(mapWidth * mapHeight, Allocator.Persistent);
 
@@ -160,26 +164,22 @@ namespace MapGenerator
 
             if (useFallOffMap)
             {
-                
                 Debug.Log("using falloff map");
                 _falloffGenerator = new FalloffGenerator()
                 {
                     FalloffMap = _falloffMap,
-                    MapSize = (uint)mapHeight
+                    MapSize = (uint) mapHeight
                 };
 
                 _perlinNoiseMap = _falloffGenerator.Schedule();
-                
-                
+
+
                 _perlinNoiseMap.Complete();
-                
-                
             }
+
             GenerateTiles();
         }
-        
-        
-        
+
 
         void GenerateTiles()
         {
@@ -191,7 +191,6 @@ namespace MapGenerator
             }
             else
             {
-
                 if (useGameObjects)
                 {
                     GenerateUsingGo(theArray);
@@ -200,7 +199,6 @@ namespace MapGenerator
                 {
                     GenerateUsingTileMap(theArray);
                 }
-
             }
 
             Debug.Log($"Spawned {_totalSpawnedTiles} out of {mapHeight * mapWidth}");
@@ -215,20 +213,20 @@ namespace MapGenerator
             octaveOffsets.Dispose();
         }
 
-        private void ConvertWithFalloffMap(float[,]array)
+        private void ConvertWithFalloffMap(float[,] array)
         {
             var falloffArray = Make2DArray(_falloffMap, mapHeight, mapWidth);
-            
+
             for (int i = 0; i < mapWidth; i++)
             {
                 for (int j = 0; j < mapHeight; j++)
                 {
-                    array[i, j] = Mathf.Clamp01(array[i, j] - falloffArray[i,j]);
-                    
-                   // Debug.Log(array[i,j]);
+                    array[i, j] = Mathf.Clamp01(array[i, j] - falloffArray[i, j]);
+
+                    // Debug.Log(array[i,j]);
                 }
             }
-            
+
             if (useGameObjects)
             {
                 GenerateUsingGo(array);
@@ -237,9 +235,7 @@ namespace MapGenerator
             {
                 GenerateUsingTileMap(array);
             }
-            
         }
-
 
 
         private void GenerateUsingGo(float[,] theArray)
@@ -280,7 +276,7 @@ namespace MapGenerator
         private void GenerateUsingTileMap(float[,] theArray)
         {
             tilemap.ClearAllTiles();
-            
+
             for (int x = 0; x < mapWidth; x++)
             for (int y = 0; y < mapHeight; y++)
             {
@@ -342,17 +338,16 @@ namespace MapGenerator
             //Not using foreach as thats less performant
 
             if (spawnedTiles.Count > 0) return;
-            
+
             for (int x = 0; x < spawnedTiles.Count; x++)
                 Destroy(spawnedTiles[x]);
         }
 
         private void OnDestroy()
         {
-            
-           // _tilesPerlined.Dispose();
-           // octaveOffsets.Dispose();
-           // _falloffMap.Dispose();
+            // _tilesPerlined.Dispose();
+            // octaveOffsets.Dispose();
+            // _falloffMap.Dispose();
         }
 
         [System.Serializable]
