@@ -1,12 +1,14 @@
 using System.Collections.Generic;
+using System.Linq;
 using Jobs;
 using Sirenix.OdinInspector;
+using TileVarients;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-
+using SysRandom = System.Random;
 namespace MapGenerator
 {
     public class PerlinMapGenerator : SerializedMonoBehaviour
@@ -290,6 +292,11 @@ namespace MapGenerator
                         _totalSpawnedTiles++;
                         //Debug.Log(currentHeight);
                         var tileType = _spriteTiles[i];
+
+                        //If There are variants available, Get a random one
+                        if(tileType.Varient != null)
+                            tileType.tile.sprite = GetSpriteVariant(tileType.Varient);
+                        
                         //Debug.Log(tileType.Name);
                         //Debug.Log(tileType.tile);
                         tilemap.SetTile(new Vector3Int(x, y, 0), tileType.tile);
@@ -305,6 +312,55 @@ namespace MapGenerator
             }
 
             generatingMap = false;
+        }
+
+
+        private Sprite GetSpriteVariant(TileVarient varient)
+        {
+            float weightSum = 0;
+            var weightIndex = new List<float>();
+            var tempList = new List<TileVarient.Tile>(varient.variants);
+
+            Shuffle(tempList);
+            //Grab all the weights in the collection
+
+            //Loop throught the collection of templates and grab all the weight
+            foreach (var tile1 in tempList.Where(tile => tile.weight > 0))
+            {
+                weightSum += tile1.weight;
+                weightIndex.Add(tile1.weight);
+            }
+            
+            //Step through all the possibilities one by one checking to see if each one is selected
+            int index = 0;
+            int lastIndex = tempList.Count - 1;
+
+            while (index < lastIndex)
+            {
+                //Do a probability check with a likelihood of weight
+                if (UnityEngine.Random.Range(0, weightSum) < weightIndex[index])
+                {
+                    return tempList[index].sprite;
+                }
+
+                //Remove the last item from the sum of total untested weights and try again
+                weightSum -= weightIndex[index++];
+            }
+
+            //If no other item was selected return the last one availible
+            return tempList[index].sprite;
+        }
+        
+        private static SysRandom rng = new SysRandom();
+        private static void Shuffle<T>(IList<T> list)
+        {
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                (list[k], list[n]) = (list[n], list[k]);
+            }
         }
 
         private float[,] Make2DArray(NativeArray<float> input, int height, int width)
@@ -343,6 +399,10 @@ namespace MapGenerator
                 Destroy(spawnedTiles[x]);
         }
 
+        
+        
+        
+        
         private void OnDestroy()
         {
             // _tilesPerlined.Dispose();
@@ -356,6 +416,7 @@ namespace MapGenerator
             public string Name;
             public float Height;
             public Tile tile;
+            public TileVarient Varient;
         }
 
         [System.Serializable]
