@@ -12,11 +12,12 @@ namespace Player
         private Vector2 movementDir;
 
         [Title("References")][SerializeField] private Rigidbody2D rb;
-        
+        [SerializeField] private Animator anim;
 
         [Title("Movement Variables")] [SerializeField]
         private float movementSpeed;
 
+        private bool _facingRight = true;
 
         public Transform debugSphere;
         void Start()
@@ -31,6 +32,9 @@ namespace Player
         void OnMovement(InputAction.CallbackContext ctx)
         {
             movementDir = _controls.Player.Movement.ReadValue<Vector2>();
+            
+            if(movementDir != Vector2.zero)
+                anim.SetBool("run",true);
         }
 
 
@@ -44,6 +48,7 @@ namespace Player
         {
             if (!movementDir.Equals(Vector2.zero))
             {
+
                 var v = rb.velocity;
 
                 var position = transform.position;
@@ -65,14 +70,33 @@ namespace Player
 
                 Debug.Log(rb.velocity.sqrMagnitude);
 
-                if (rb.velocity.sqrMagnitude > 3f)
+                if (movementDir.x > 0f && !_facingRight)
                 {
-                    //rb.velocity = v.normalized * 3f;
+                    Flip();
+                }
+                if (movementDir.x < 0f && _facingRight)
+                {
+                    Flip();
                 }
             }
-            else rb.velocity = Vector3.zero;
+            else
+            {
+                anim.SetBool("run",false);
+                rb.velocity = Vector3.zero;
+            }
 
 
+        }
+
+
+        private void Flip()
+        {
+            var currentScale = transform.localScale;
+            currentScale.x *= -1;
+            transform.localScale = currentScale;
+            
+            
+            _facingRight = !_facingRight;
         }
     }
 }
