@@ -13,7 +13,7 @@ namespace Player
 
         [Title("References")][SerializeField] private Rigidbody2D rb;
         [SerializeField] private Animator anim;
-
+        [SerializeField] private ParticleSystem dirtParticles;
         [Title("Movement Variables")] [SerializeField]
         private float movementSpeed;
 
@@ -78,11 +78,14 @@ namespace Player
                 {
                     Flip();
                 }
+                
+                dirtParticles.Play();
             }
             else
             {
                 anim.SetBool("run",false);
                 rb.velocity = Vector3.zero;
+                dirtParticles.Stop();
             }
 
 
