@@ -1,0 +1,94 @@
+using System;
+using Cainos.LucidEditor;
+using Pickup;
+using Unity.VisualScripting;
+using UnityEngine;
+
+namespace Player
+{
+    public class PlayerInteraction : MonoBehaviour
+    {
+        public static PlayerInteraction instance;
+
+      [SerializeField]private float interactionRadius;
+     private Vector2 currentPos;
+        [SerializeField] private LayerMask layerMask;
+
+
+        public PlayerInput _controls;
+
+        [ShowInInspector] private GameObject closestGameObject;
+
+        private Action interactionKeyAction;
+
+        // Start is called before the first frame update
+        void Start()
+        {
+            instance = this;
+            _controls = new PlayerInput();
+            _controls.Player.Interact.performed += context => interactionKeyAction?.Invoke();
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+            GetClosestObjectNearYou();
+        }
+
+
+        public void GetClosestObjectNearYou(bool overridden = false)
+        {
+            if ((Vector3) currentPos != transform.position || overridden)
+            {
+                const int maxColliders = 10;
+                var colliders = new Collider2D[maxColliders];
+                var numColliders =
+                    Physics2D.OverlapCircleNonAlloc(transform.position, interactionRadius, colliders, layerMask);
+                var smallestDistance = float.PositiveInfinity;
+
+                if (numColliders > 0)
+                {
+                    for (var i = 0; i < numColliders; i++)
+                    {
+                        var directionToTarget = colliders[i].transform.position - transform.position;
+                        //Doing sqsrMagnitude is much more efficent then doing Vector3.Distance;
+                        var dSqrToTarget = directionToTarget.sqrMagnitude;
+
+                        if (!(dSqrToTarget < smallestDistance)) continue;
+                        smallestDistance = dSqrToTarget;
+                        closestGameObject = colliders[i].gameObject;
+                    }
+
+                    CheckInteractionType(closestGameObject);
+                }
+                else if (closestGameObject)
+                {
+                    closestGameObject = null;
+                    interactionKeyAction = null;
+                }
+
+                currentPos = transform.position;
+            }
+        }
+
+        void CheckInteractionType(GameObject gO)
+        {
+            if (!gO.TryGetComponent<Pickupable>(out var pickupable)) return;
+            //reset interaction new ItemStack(){stackAmount = amountGiven}key
+            interactionKeyAction = null;
+            interactionKeyAction += () => pickupable.OnPickup();
+        }
+
+        public void RemoveClosestGameObject()
+        {
+            closestGameObject = null;
+            interactionKeyAction = null;
+        }
+
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.DrawWireSphere(transform.position,interactionRadius);
+        }
+    }
+}

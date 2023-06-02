@@ -81,7 +81,7 @@ namespace Managers
 
                 sunLightRotation = Mathf.Lerp(0, 360, (float) percentage);
                 
-                Debug.Log($"Percentage: {percentage}");
+                //Debug.Log($"Percentage: {percentage}");
                 
                 UpdateLighting((float)percentage,sunLightRotation);
         }

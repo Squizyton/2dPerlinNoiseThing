@@ -8,6 +8,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Random = Unity.Mathematics.Random;
 using SysRandom = System.Random;
 namespace MapGenerator
 {
@@ -52,6 +53,9 @@ namespace MapGenerator
         [Space(10), Title("Misc")] [SerializeField]
         private bool randomizeSeed;
 
+        [SerializeField]private List<GameObject> environments;
+        
+        
         [EnableIf("@!randomizeSeed")] public uint seed;
         public Vector2 offset;
 
@@ -311,9 +315,34 @@ namespace MapGenerator
                 }
             }
 
-            generatingMap = false;
+            GenerateEnvironment();
         }
 
+
+        //TODO:: Move this too it's own script
+        void GenerateEnvironment()
+        {
+            foreach (var position in tilemap.cellBounds.allPositionsWithin)
+            {
+                if (tilemap.GetTile(position) != _spriteTiles[2].tile) continue;
+                var chance = UnityEngine.Random.Range(0f, 1);
+
+                if(chance < .1f)
+                    GameManager.instance.PlacePlayer(tilemap.GetCellCenterWorld(position));
+                
+                
+                if (!(chance < 0.15f)) continue;
+                Vector3 cellPosition = tilemap.GetCellCenterWorld(position);
+                Instantiate(environments[UnityEngine.Random.Range(0, environments.Count)], cellPosition,
+                    Quaternion.identity);
+                
+                
+            }
+            
+            
+            
+            generatingMap = false;
+        }
 
         private Sprite GetSpriteVariant(TileVarient varient)
         {

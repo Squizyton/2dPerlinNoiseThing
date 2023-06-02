@@ -15,7 +15,7 @@ TagManager:
   - Lighting
   - Lighting Internal (Game)
   - Lighting Internal (Scene)
-  - 
+  - Interactable
   - 
   - 
   - 
@@ -49,4 +49,7 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 3599605095
+    locked: 0
+  - name: Building
+    uniqueID: 1123030245
     locked: 0
