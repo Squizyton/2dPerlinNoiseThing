@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Items
 {
     [CreateAssetMenu(fileName = "New Item", menuName = "Items/New Item")]
-    public class ItemData : SerializedScriptableObject
+    public class ItemData : SerializedScriptableObject, IEnumerable
     {
         
         [Title("Basic Variables")]
@@ -39,6 +39,11 @@ namespace Items
             Weapon,
             Consumable,
             BuildingPiece
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

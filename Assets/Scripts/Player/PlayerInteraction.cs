@@ -10,10 +10,12 @@ namespace Player
     {
         public static PlayerInteraction instance;
 
-      [SerializeField]private float interactionRadius;
-     private Vector2 currentPos;
+        [SerializeField] private float interactionRadius;
+        private Vector2 currentPos;
         [SerializeField] private LayerMask layerMask;
-
+            
+        
+        
 
         public PlayerInput _controls;
 
@@ -26,7 +28,12 @@ namespace Player
         {
             instance = this;
             _controls = new PlayerInput();
-            _controls.Player.Interact.performed += context => interactionKeyAction?.Invoke();
+            _controls.Player.Interact.performed += context =>
+            {
+                Debug.Log("Hello?");
+                interactionKeyAction?.Invoke();
+            };
+            _controls.Enable();
         }
 
         // Update is called once per frame
@@ -64,7 +71,7 @@ namespace Player
                 else if (closestGameObject)
                 {
                     closestGameObject = null;
-                    interactionKeyAction = null;
+                    interactionKeyAction += () => { Debug.Log("Is this like overriding?"); };
                 }
 
                 currentPos = transform.position;
@@ -73,10 +80,16 @@ namespace Player
 
         void CheckInteractionType(GameObject gO)
         {
-            if (!gO.TryGetComponent<Pickupable>(out var pickupable)) return;
+            if (!gO.TryGetComponent<Pickupable>(out var pickupable) && gO != closestGameObject) return;
             //reset interaction new ItemStack(){stackAmount = amountGiven}key
             interactionKeyAction = null;
-            interactionKeyAction += () => pickupable.OnPickup();
+
+            Debug.Log(pickupable.name);
+            interactionKeyAction += () =>
+            {
+                Debug.Log("Hello?");
+                pickupable.OnPickup();
+            };
         }
 
         public void RemoveClosestGameObject()
@@ -88,7 +101,7 @@ namespace Player
 
         private void OnDrawGizmos()
         {
-            Gizmos.DrawWireSphere(transform.position,interactionRadius);
+            Gizmos.DrawWireSphere(transform.position, interactionRadius);
         }
     }
 }

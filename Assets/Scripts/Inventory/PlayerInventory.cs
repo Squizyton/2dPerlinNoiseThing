@@ -12,22 +12,24 @@ namespace Inventory
     public class PlayerInventory : SerializedMonoBehaviour
     {
 
-        private const int TOTAL_ITEM_AMOUNT = 100;
+        private const int TotalItemAmount = 100;
 
         private int currentAmountOfItemStacks;
         
         [SerializeField]private Dictionary<ItemData, ItemStack[]> items;
 
+        private const int TotalHotbarAmount = 6;
+        private ItemData[] hotbar;
 
         private void Start()
         {
-
+            hotbar = new ItemData[TotalHotbarAmount];
             items = new Dictionary<ItemData, ItemStack[]>();
         }
 
         public bool AddItem(Pickupable item)
         {
-            if (currentAmountOfItemStacks >= TOTAL_ITEM_AMOUNT)
+            if (currentAmountOfItemStacks >= TotalItemAmount)
             {
                 item.OnPickupFail();
                 return false;
@@ -65,6 +67,12 @@ namespace Inventory
 
         public void AddItem()
         {
+        }
+
+
+        public void AddToHotbar(ItemData itemData)
+        {
+            
         }
 
 

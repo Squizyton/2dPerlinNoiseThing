@@ -21,7 +21,6 @@ namespace Pickup
 
         public virtual void OnPickup()
         {
-            Debug.Log("called");
             PlayerContainer.instance.inventory.AddItem(this);
             PlayerContainer.instance.interaction.GetClosestObjectNearYou(true);
             Destroy(gameObject);

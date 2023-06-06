@@ -22,7 +22,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   itemName: Wooden Wall
-  prefab: {fileID: 0}
+  prefab: {fileID: 6464080102876777333, guid: 52e46ba7ab3d1064eb0c10de8c1c67d3, type: 3}
   typeOfItem: 3
   maxStackAmount: 998
   itemIcon: {fileID: 472814998, guid: 442ce22c0455d1841b6356ca737a18f5, type: 3}
