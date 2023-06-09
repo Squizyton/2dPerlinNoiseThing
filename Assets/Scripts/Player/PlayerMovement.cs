@@ -66,9 +66,7 @@ namespace Player
 
                 var normalizedDir = movementDir.normalized;
                 rb.velocity = normalizedDir * movementSpeed;
-
-
-                Debug.Log(rb.velocity.sqrMagnitude);
+                
 
                 if (movementDir.x > 0f && !_facingRight)
                 {

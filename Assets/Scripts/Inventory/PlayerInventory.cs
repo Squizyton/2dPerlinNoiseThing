@@ -76,7 +76,7 @@ namespace Inventory
         }
 
 
-        private struct ItemStack
+        public struct ItemStack
         {
             public int stackAmount;
             public ItemData data;

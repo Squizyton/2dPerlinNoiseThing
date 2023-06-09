@@ -3,6 +3,8 @@ using Cainos.LucidEditor;
 using Pickup;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 
 namespace Player
 {
@@ -33,6 +35,9 @@ namespace Player
                 Debug.Log("Hello?");
                 interactionKeyAction?.Invoke();
             };
+
+            _controls.Player.Hotbar.performed += HotbarSwitching;
+
             _controls.Enable();
         }
 
@@ -42,7 +47,8 @@ namespace Player
             GetClosestObjectNearYou();
         }
 
-
+        
+#region Interaction
         public void GetClosestObjectNearYou(bool overridden = false)
         {
             if ((Vector3) currentPos != transform.position || overridden)
@@ -97,8 +103,21 @@ namespace Player
             closestGameObject = null;
             interactionKeyAction = null;
         }
+#endregion
 
 
+#region Misc
+
+private void HotbarSwitching(InputAction.CallbackContext ctx)
+{
+    UIManager.instance.SwitchHotbarSlot((int)Mathf.Clamp(ctx.ReadValue<float>() * -1f, -1, 1));
+
+}
+
+
+#endregion
+        
+        
         private void OnDrawGizmos()
         {
             Gizmos.DrawWireSphere(transform.position, interactionRadius);
