@@ -11,20 +11,24 @@ namespace Inventory
 {
     public class PlayerInventory : SerializedMonoBehaviour
     {
-
         private const int TotalItemAmount = 100;
 
         private int currentAmountOfItemStacks;
-        
-        [SerializeField]private Dictionary<ItemData, ItemStack[]> items;
+
+        [SerializeField] private Dictionary<ItemData, ItemStack[]> items;
 
         private const int TotalHotbarAmount = 6;
         private ItemData[] hotbar;
+
+
+        private Action<ItemStack> _inventoryUpdate;
 
         private void Start()
         {
             hotbar = new ItemData[TotalHotbarAmount];
             items = new Dictionary<ItemData, ItemStack[]>();
+
+            _inventoryUpdate += UIManager.instance.UpdateInventory;
         }
 
         public bool AddItem(Pickupable item)
@@ -34,12 +38,13 @@ namespace Inventory
                 item.OnPickupFail();
                 return false;
             }
-            var amountGiven = Random.Range((int)item.ReturnItemData().minMaxOfItemGet.x,(int)item.ReturnItemData().minMaxOfItemGet.y);
+
+            var amountGiven = Random.Range((int) item.ReturnItemData().minMaxOfItemGet.x,
+                (int) item.ReturnItemData().minMaxOfItemGet.y);
 
 
             if (items.ContainsKey(item.ReturnItemData()))
             {
-             
                 var itemStack = items[item.ReturnItemData()]
                     .First(i => i.stackAmount < item.ReturnItemData().maxStackAmount);
                 itemStack.stackAmount += amountGiven;
@@ -54,13 +59,18 @@ namespace Inventory
 
                     items[item.ReturnItemData()].ToList().Add(newStack);
                     currentAmountOfItemStacks++;
+
+                    //Update the itemStack we will pass to the new Stack
+                    itemStack = newStack;
                 }
+                
+                _inventoryUpdate?.Invoke(itemStack);
             }
             else
             {
-                items.Add(item.ReturnItemData(),new []{new ItemStack(){stackAmount = amountGiven}});
+                items.Add(item.ReturnItemData(), new[] {new ItemStack() {stackAmount = amountGiven}});
             }
-            
+
             return true;
         }
 
@@ -72,7 +82,6 @@ namespace Inventory
 
         public void AddToHotbar(ItemData itemData)
         {
-            
         }
 
 

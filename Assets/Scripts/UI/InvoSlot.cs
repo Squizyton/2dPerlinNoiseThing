@@ -19,5 +19,11 @@ namespace UI
       }
 
 
+
+      public ItemData ReturnSlotItem()
+      {
+         return heldItem;
+      }
+
    }
 }

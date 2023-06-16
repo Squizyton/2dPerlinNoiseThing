@@ -29,7 +29,7 @@ namespace Player
         }
 
 
-        void OnMovement(InputAction.CallbackContext ctx)
+        private void OnMovement(InputAction.CallbackContext ctx)
         {
             movementDir = _controls.Player.Movement.ReadValue<Vector2>();
             
